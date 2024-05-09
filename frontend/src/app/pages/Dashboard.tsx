@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import Header from "@/components/ui/Header";
 import { LineChart } from "@/components/charts/LineChart";
+import Dropdown from "@/components/ui/Dropdown";
 
 import { Button } from "@/components/ui/button"
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
@@ -34,6 +35,7 @@ const Dashboard = () => {
     // const [data, setData] = useState<d3.DSVRowArray<string>>();
     // const [groupedDataByCountry, setGroupedDataByCountry] = useState<[string, d3.DSVRowString<string>[]][]>();
     const [nivoData, setNivoData] = useState<ChartData[]>();
+    const [selectedVariable, setSelectedVariable] = useState<string>('');
 
     const csvURL = "https://gist.githubusercontent.com/SimrnGupta/87d0cca2398dfb1db7ffbd41122a589e/raw/smart_energy_predicted_values.csv";
 
@@ -57,6 +59,17 @@ const Dashboard = () => {
         return nivoData;
     };
 
+    const variables = [
+        { label: 'Access to Electricity (% of population)', value: 'accessToElectricity' },
+        { label: 'Access to Clean Fuels for Cooking', value: 'accessToCleanFuels' },
+        { label: 'Renewable Electricity Generating Capacity', value: 'renewableCapacity' }
+      ];
+    
+    const handleVariableSelect = (variable: string) => {
+        console.log("Selected Variable:", variable);
+        setSelectedVariable(variable);
+    };
+
     useEffect(() => {
         if (csvURL) {
             parseAndTransformData(csvURL).then(transformedData => {
@@ -64,7 +77,7 @@ const Dashboard = () => {
                 console.log(transformedData)
             });
         }
-    }, [csvURL]);
+    }, [csvURL, selectedVariable]);
 
     return (
         <div className="dark:bg-gray-900">
@@ -124,24 +137,7 @@ const Dashboard = () => {
                         <div className="mb-6 space-y-4">
                             <h2 className="text-2xl font-bold text-center">Sustainability Predictions</h2>
                             <div className="flex items-center justify-between">
-                                <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button className="flex items-center gap-2" variant="outline">
-                                    {/* <GlobeIcon className="h-4 w-4" /> */}
-                                    <span>Select Country</span>
-                                    {/* <ChevronDownIcon className="h-4 w-4" /> */}
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="start" className="w-[200px]">
-                                    <DropdownMenuLabel>Countries</DropdownMenuLabel>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem value="us">United States</DropdownMenuItem>
-                                    <DropdownMenuItem value="uk">United Kingdom</DropdownMenuItem>
-                                    <DropdownMenuItem value="ca">Canada</DropdownMenuItem>
-                                    <DropdownMenuItem value="au">Australia</DropdownMenuItem>
-                                    <DropdownMenuItem value="de">Germany</DropdownMenuItem>
-                                </DropdownMenuContent>
-                                </DropdownMenu>
+                                <Dropdown options={variables} onOptionSelected={handleVariableSelect} />
                             </div>
                             <div >
                                 <CardNew

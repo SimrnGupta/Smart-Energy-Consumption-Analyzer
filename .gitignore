@@ -41,3 +41,4 @@ frontend/next-env.d.ts
 backend/env
 backend/__pycache__
 backend/.DS_Store
+backend/client_secret.json
