@@ -1,13 +1,71 @@
+'use client';
+
+import axios from "axios";
+import * as d3 from "d3";
+import { useEffect, useState } from "react";
+
 import Header from "@/components/ui/Header";
+import { LineChart } from "@/components/charts/LineChart";
 
 import { Button } from "@/components/ui/button"
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
-import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import CardNew from "@/components/ui/CardNew";
 import { SearchIcon } from "@/components/ui/Icons";
 
+interface Point {
+    x: string | number | Date;
+    y: number | string | Date;
+}
+  
+interface ChartData {
+    id: string;
+    data: Point[];
+}
+  
+export interface ChartProps {
+    chartData: ChartData[];
+    xLabel: string;
+    yLabel: string;
+}
+
+
 const Dashboard = () => {
+    // const [data, setData] = useState<d3.DSVRowArray<string>>();
+    // const [groupedDataByCountry, setGroupedDataByCountry] = useState<[string, d3.DSVRowString<string>[]][]>();
+    const [nivoData, setNivoData] = useState<ChartData[]>();
+
+    const csvURL = "https://gist.githubusercontent.com/SimrnGupta/87d0cca2398dfb1db7ffbd41122a589e/raw/smart_energy_predicted_values.csv";
+
+    // Function to parse CSV and transform the data
+    const parseAndTransformData = async (csvFile: string) => {
+        const data = await d3.csv(csvFile);
+    
+        // Group data by 'Entity'
+        const groupedData = d3.groups(data, d => d.Entity);
+
+    
+        // Transform into Nivo-compatible format
+        const nivoData = groupedData.map(([key, values]) => ({
+        id: key,
+        data: values.map(d => ({
+            x: +d.Year,
+            y: +d["Renewable-electricity-generating-capacity-per-capita"]
+        }))
+        }));
+    
+        return nivoData;
+    };
+
+    useEffect(() => {
+        if (csvURL) {
+            parseAndTransformData(csvURL).then(transformedData => {
+                setNivoData(transformedData);
+                console.log(transformedData)
+            });
+        }
+    }, [csvURL]);
+
     return (
         <div className="dark:bg-gray-900">
             <Header title="Smart Energy Emission Prediction" />
@@ -85,16 +143,20 @@ const Dashboard = () => {
                                 </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div >
                                 <CardNew
                                     title="Emissions Prediction"
                                     content={
-                                        <p className="text-gray-500 dark:text-gray-400">
-                                            This is the prediction for future emissions levels based on the ML model.
-                                        </p>
+                                        <div>
+                                        {nivoData ? <LineChart chartData={nivoData} xLabel="Year" yLabel="Emmisions Prediction" /> : <p>Loading data...</p>}
+                                        </div>
+                                        // <LineChart chartData={nivoData}/>
+                                        // <p className="text-gray-500 dark:text-gray-400">
+                                        //     This is the prediction for future emissions levels based on the ML model.
+                                        // </p>
                                     }
                                 />
-                                <CardNew
+                                {/* <CardNew
                                     title="Sustainable Energy Usage"
                                     content={
                                         <p className="text-gray-500 dark:text-gray-400">
@@ -117,7 +179,7 @@ const Dashboard = () => {
                                             This is the prediction for the adoption of renewable energy sources.
                                         </p>
                                     }
-                                />
+                                /> */}
                             </div>
                         </div>
                     </div>
