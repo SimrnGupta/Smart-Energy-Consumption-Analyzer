@@ -1,9 +1,14 @@
 import React from 'react';
+import { GlobeIcon } from './Icons';
 
 const Header = ({ title } : { title : String }) => {
   return (
-    <header className="bg-sky-100 text-gray-700 text-center py-4">
-      <h1 className="text-3xl font-bold">{title}</h1>
+    <header className="flex items-center justify-between bg-sky-100 text-gray-800 text-center py-4">
+      <div className="flex-grow-0 ml-4">
+        <GlobeIcon/>
+      </div>
+      
+      <h1 className="text-3xl font-bold flex-grow text-center">{title}</h1>
     </header>
   );
 };

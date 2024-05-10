@@ -129,7 +129,7 @@ const Dashboard = () => {
     }, [selectedVariable, searchQuery, promptResponse]);
 
     return (
-        <div className="dark:bg-gray-900">
+        <div className="dark:bg-sky-500">
             <Header title="Sustainable Energy Analytics" />
             <div className="flex">
                 {/* ------------------ */}
@@ -157,7 +157,7 @@ const Dashboard = () => {
 
                     {/* -------------- */}
 
-                    <div className="flex-1 border-r border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900">
+                    <div className="flex-1 border-r border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-sky-500">
                         <div className="mb-6 space-y-4">
                             <h2 className="text-xl font-bold text-center underline">Understanding Trends visualizing Past Data vs Predictions</h2>
                             <div className="flex items-center justify-between">

@@ -11,7 +11,7 @@ const Dropdown = ({ options, onOptionSelected } : { options : VariableOption[], 
     <DropdownMenu.Root>
       <DropdownMenu.Trigger 
       className="flex bg-sky-100 text-gray-900 px-4 py-2 rounded-md cursor-pointer
-      hover:bg-sky-200 border cursor-pointer">
+      hover:bg-sky-200 border border-gray-950 cursor-pointer">
         Select Variable
         <ChevronDownIcon className="ml-2" />
       </DropdownMenu.Trigger>
