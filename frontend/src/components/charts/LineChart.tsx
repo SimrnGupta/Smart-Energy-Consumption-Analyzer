@@ -11,6 +11,14 @@ const themeObject = {
                 "outlineColor": "transparent"
             }
         },
+    },
+    "tooltip": {
+        "wrapper": {},
+        "container": {
+            "background": "#fafafa",
+            "color": "#333333",
+            "fontSize": 12
+        }
     }
 };
 
