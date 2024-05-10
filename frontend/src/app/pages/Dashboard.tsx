@@ -36,8 +36,7 @@ const Dashboard = () => {
 
     const [selectedVariable, setSelectedVariable] = useState<string>('co2EmissionsByCountry');
 
-    const csvURL = "https://gist.githubusercontent.com/SimrnGupta/87d0cca2398dfb1db7ffbd41122a589e/raw/smart_energy_predicted_values.csv";
-
+    const csvURL = "https://gist.githubusercontent.com/SimrnGupta/03a20d7b8824955e39a15e2fbcdbd2fe/raw/sustainable_energy_analytics.csv";
 
     // Select charts
     const variables = [
