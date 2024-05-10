@@ -7,7 +7,6 @@ const Header = ({ title } : { title : String }) => {
       <div className="flex-grow-0 ml-4">
         <GlobeIcon/>
       </div>
-      
       <h1 className="text-3xl font-bold flex-grow text-center">{title}</h1>
     </header>
   );

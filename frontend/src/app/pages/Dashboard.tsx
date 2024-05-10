@@ -57,7 +57,7 @@ const Dashboard = () => {
     const parseAndTransformData = async (csvFile: string) => {
         const data = await d3.csv(csvFile);
     
-        // Group data by 'Entity'
+        // Group data by 'Entity' (Country)
         const groupedData = d3.groups(data, d => d.Entity);
 
         const co2EmissionsByCountryData = groupedData.map(([key, values]) => ({
@@ -132,7 +132,7 @@ const Dashboard = () => {
         <div className="dark:bg-sky-500">
             <Header title="Sustainable Energy Analytics" />
             <div className="flex">
-                {/* ------------------ */}
+
                     <div className="flex-2 p-6">
                         <div className="mb-6 space-y-4">
                             <h2 className="text-xl font-bold text-center">Talk to our Gemini Energy Advisor</h2>
@@ -152,10 +152,6 @@ const Dashboard = () => {
                             />
                         </div>
                     </div>
-
-                    {/* ------------- */}
-
-                    {/* -------------- */}
 
                     <div className="flex-1 border-r border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-sky-500">
                         <div className="mb-6 space-y-4">
@@ -214,8 +210,6 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* ---------------- */}
             </div>
         </div>
     );
