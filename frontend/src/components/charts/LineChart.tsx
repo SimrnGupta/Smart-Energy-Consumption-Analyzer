@@ -1,3 +1,5 @@
+import * as d3 from "d3";
+
 import { ResponsiveLine } from "@nivo/line"
 import { ChartProps } from "@/app/pages/Dashboard";
 
@@ -41,18 +43,22 @@ export const LineChart: React.FC<ChartProps> = ({ chartData, xLabel, yLabel }) =
                     tickPadding: 5,
                     tickRotation: -45,
                     legend: xLabel,
-                    legendOffset: 36,
+                    legendOffset: 40,
                     legendPosition: 'middle',
-                    truncateTickAt: 0
+                    truncateTickAt: 0,
                 }}
                 axisLeft={{
                     tickSize: 5,
                     tickPadding: 5,
                     tickRotation: 0,
                     legend: yLabel,
-                    legendOffset: -40,
+                    legendOffset: -50,
                     legendPosition: 'middle',
                     truncateTickAt: 0,
+                    format: function(val) {
+                        console.log("val : ", d3.format(".2s")(val))
+                        return d3.format(".2s")(val)
+                    }
                 }}
                 colors={{ scheme: 'category10' }}
                 pointSize={10}

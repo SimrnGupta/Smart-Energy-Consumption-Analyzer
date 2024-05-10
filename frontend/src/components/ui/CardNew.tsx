@@ -24,7 +24,7 @@ const CardTitle = ({ title } : { title ?: String} ) => (
 );
 
 const CardContent = ({ children } : { children : ReactNode} ) => (
-    <div className="p-6 pt-0">
+    <div className="p-6 pt-0 text-gray-600">
         {children}
     </div>
 );

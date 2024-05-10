@@ -1,7 +1,12 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { Check, ChevronDownIcon, ChevronRight } from 'lucide-react';
+import { Check, ChevronDownIcon } from 'lucide-react';
 
-const Dropdown = ({ options, onOptionSelected }) => {
+interface VariableOption {
+  label: string;
+  value: string;
+}
+
+const Dropdown = ({ options, onOptionSelected } : { options : VariableOption[], onOptionSelected : (variable: string) => void}) => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger 

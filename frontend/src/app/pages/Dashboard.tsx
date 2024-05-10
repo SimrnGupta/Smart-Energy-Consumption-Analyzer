@@ -1,7 +1,7 @@
 'use client';
 
 import * as d3 from "d3";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Header from "@/components/ui/Header";
 import { LineChart } from "@/components/charts/LineChart";
@@ -27,12 +27,31 @@ export interface ChartProps {
 
 
 const Dashboard = () => {
-    // const [data, setData] = useState<d3.DSVRowArray<string>>();
-    // const [groupedDataByCountry, setGroupedDataByCountry] = useState<[string, d3.DSVRowString<string>[]][]>();
-    const [nivoData, setNivoData] = useState<ChartData[]>();
-    const [selectedVariable, setSelectedVariable] = useState<string>('');
+    const [co2EmissionsByCountryData, setCo2EmissionsByCountryData] = useState<ChartData[]>();
+    const [renewableEnergyShareInTotalFinalEnergyConsumptionData, setRenewableEnergyShareInTotalFinalEnergyConsumptionData] = useState<ChartData[]>();
+    const [primaryEneryPerCapitaData, setPrimaryEneryPerCapitaData] = useState<ChartData[]>();
+    const [renewableCapacityData, setRenewableCapacityData] = useState<ChartData[]>();
+    // const [financialFlowData, financialFlowData] = useState<ChartData[]>();
+    // const [accessToElectricityData, accessToElectricityData] = useState<ChartData[]>();
+
+    const [selectedVariable, setSelectedVariable] = useState<string>('co2EmissionsByCountry');
 
     const csvURL = "https://gist.githubusercontent.com/SimrnGupta/87d0cca2398dfb1db7ffbd41122a589e/raw/smart_energy_predicted_values.csv";
+
+
+    // Select charts
+    const variables = [
+        { label: 'Carbon dioxide emissions (kilo ton)', value: 'co2EmissionsByCountry' },
+        { label: 'Renewable energy share in the total final energy consumption (%)', value: 'renewableEnergyShareInTotalFinalEnergyConsumption'},
+        { label: 'Primary energy consumption per capita (kWh/person)', value: 'primaryEneryPerCapita' },
+        { label: 'Renewable Electricity Generating Capacity', value: 'renewableCapacity' },
+    ];
+    
+    const handleVariableSelect = (variable: string) => {
+        console.log("Selected Variable:", variable);
+        setSelectedVariable(variable);
+    };
+    
 
     // Function to parse CSV and transform the data
     const parseAndTransformData = async (csvFile: string) => {
@@ -41,30 +60,41 @@ const Dashboard = () => {
         // Group data by 'Entity'
         const groupedData = d3.groups(data, d => d.Entity);
 
-    
-        // Transform into Nivo-compatible format
-        const nivoData = groupedData.map(([key, values]) => ({
-        id: key,
-        data: values.map(d => ({
-            x: +d.Year,
-            y: +d["Renewable-electricity-generating-capacity-per-capita"]
-        }))
+        const co2EmissionsByCountryData = groupedData.map(([key, values]) => ({
+            id: key,
+            data: values.map(d => ({
+                x: +d.Year,
+                y: +d["Value_co2_emissions_kt_by_country"]
+            }))
         }));
-    
-        return nivoData;
-    };
+        setCo2EmissionsByCountryData(co2EmissionsByCountryData);
 
+        const renewableEnergyShareInTotalFinalEnergyConsumptionData = groupedData.map(([key, values]) => ({
+            id: key,
+            data: values.map(d => ({
+                x: +d.Year,
+                y: +d["Renewable energy share in the total final energy consumption (%)"]
+            }))
+        }));
+        setRenewableEnergyShareInTotalFinalEnergyConsumptionData(renewableEnergyShareInTotalFinalEnergyConsumptionData);
 
-    // Select charts
-    const variables = [
-        { label: 'Access to Electricity (% of population)', value: 'accessToElectricity' },
-        { label: 'Access to Clean Fuels for Cooking', value: 'accessToCleanFuels' },
-        { label: 'Renewable Electricity Generating Capacity', value: 'renewableCapacity' }
-      ];
-    
-    const handleVariableSelect = (variable: string) => {
-        console.log("Selected Variable:", variable);
-        setSelectedVariable(variable);
+        const primaryEneryPerCapitaData = groupedData.map(([key, values]) => ({
+            id: key,
+            data: values.map(d => ({
+                x: +d.Year,
+                y: +d["Primary energy consumption per capita (kWh/person)"]
+            }))
+        }));
+        setPrimaryEneryPerCapitaData(primaryEneryPerCapitaData);
+
+        const renewableCapacityData = groupedData.map(([key, values]) => ({
+            id: key,
+            data: values.map(d => ({
+                x: +d.Year,
+                y: +d["Renewable-electricity-generating-capacity-per-capita"]
+            }))
+        }));
+        setRenewableCapacityData(renewableCapacityData);
     };
 
     // Gemini Prompt
@@ -95,33 +125,27 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        if (csvURL) {
-            parseAndTransformData(csvURL).then(transformedData => {
-                setNivoData(transformedData);
-                console.log(transformedData)
-            });
-        }
+        parseAndTransformData(csvURL);
     }, [selectedVariable, searchQuery, promptResponse]);
 
     return (
         <div className="dark:bg-gray-900">
-            <Header title="Smart Energy Emission Prediction" />
-            <div className="flex h-screen">
+            <Header title="Sustainable Energy Analytics" />
+            <div className="flex">
                 {/* ------------------ */}
                     <div className="flex-2 p-6">
                         <div className="mb-6 space-y-4">
-                            <h2 className="text-2xl font-bold">Ask Gemini about the Trends</h2>
+                            <h2 className="text-xl font-bold text-center">Talk to our Gemini Energy Advisor</h2>
                             <PromptQuery searchQuery={searchQuery} handleInputChange={handleInputChange} handleSubmit={handleSubmit}/>
                         </div>
                         <div className="space-y-4 min-w-96 max-w-96">
-                            {/* <h2 className="text-2xl font-bold">API Response</h2> */}
                             <CardNew
                             content = {
                                 <div className="flex flex-col min-h-96">
                                     {promptResponse ? 
-                                    <p className="mt-3 text-gray-900 text-gray-600">{promptResponse}</p> 
+                                    <p className="text-gray-900 text-gray-600">{promptResponse}</p> 
                                     : 
-                                    <p className="mt-3 text-gray-900 text-gray-600">This is the response from the Gemini API.</p>
+                                    <p className="text-gray-900 text-gray-600 text-center mt-10">This is the response from our fine-tuned Gemini model.</p>
                                     }
                                 </div>
                             }
@@ -135,47 +159,58 @@ const Dashboard = () => {
 
                     <div className="flex-1 border-r border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900">
                         <div className="mb-6 space-y-4">
-                            <h2 className="text-2xl font-bold text-center">Sustainability Predictions</h2>
+                            <h2 className="text-xl font-bold text-center underline">Understanding Trends visualizing Past Data vs Predictions</h2>
                             <div className="flex items-center justify-between">
                                 <Dropdown options={variables} onOptionSelected={handleVariableSelect} />
                             </div>
                             <div >
-                                <CardNew
-                                    title="Emissions Prediction"
+                                {
+                                   selectedVariable == 'renewableEnergyShareInTotalFinalEnergyConsumption' && 
+                                   <CardNew
+                                    title="Renewable energy share in the total final energy consumption (%)"
                                     content={
                                         <div>
-                                        {nivoData ? <LineChart chartData={nivoData} xLabel="Year" yLabel="Emmisions Prediction" /> : <p>Loading data...</p>}
+                                        {renewableEnergyShareInTotalFinalEnergyConsumptionData ? <LineChart chartData={renewableEnergyShareInTotalFinalEnergyConsumptionData} xLabel="Year" yLabel="Renewable energy share (%)" /> : <p>Loading Chart...</p>}
                                         </div>
-                                        // <LineChart chartData={nivoData}/>
-                                        // <p className="text-gray-500 dark:text-gray-400">
-                                        //     This is the prediction for future emissions levels based on the ML model.
-                                        // </p>
                                     }
                                 />
-                                {/* <CardNew
-                                    title="Sustainable Energy Usage"
+                                }
+
+                                {
+                                   selectedVariable == 'co2EmissionsByCountry' && 
+                                   <CardNew
+                                    title="Carbon dioxide Emissions"
                                     content={
-                                        <p className="text-gray-500 dark:text-gray-400">
-                                            This is the prediction for sustainable energy usage in the coming years.
-                                        </p>
+                                        <div>
+                                        {co2EmissionsByCountryData ? <LineChart chartData={co2EmissionsByCountryData} xLabel="Year" yLabel="CO2 Emissions (kt)" /> : <p>Loading Chart...</p>}
+                                        </div>
                                     }
                                 />
-                                <CardNew
-                                    title="Financial Flow"
+                                }
+
+                                {
+                                   selectedVariable == 'primaryEneryPerCapita' && 
+                                   <CardNew
+                                    title="Primary energy consumption per capita (kWh/person)"
                                     content={
-                                        <p className="text-gray-500 dark:text-gray-400">
-                                            This is the prediction for financial flow towards sustainable energy sources.
-                                        </p>
+                                        <div>
+                                        {primaryEneryPerCapitaData ? <LineChart chartData={primaryEneryPerCapitaData} xLabel="Year" yLabel="Primary energy consumption (kWh/person)" /> : <p>Loading Chart...</p>}
+                                        </div>
                                     }
                                 />
-                                <CardNew
-                                    title="Renewable Energy Adoption"
+                                }
+
+                                {
+                                   selectedVariable == 'renewableCapacity' && 
+                                   <CardNew
+                                    title="Renewable Electricity Generating Capacity"
                                     content={
-                                        <p className="text-gray-500 dark:text-gray-400">
-                                            This is the prediction for the adoption of renewable energy sources.
-                                        </p>
+                                        <div>
+                                        {renewableCapacityData ? <LineChart chartData={renewableCapacityData} xLabel="Year" yLabel="Renewable Electricity Generating Capacity" /> : <p>Loading Chart...</p>}
+                                        </div>
                                     }
-                                /> */}
+                                />
+                                }
                             </div>
                         </div>
                     </div>
